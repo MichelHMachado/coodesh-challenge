@@ -1,7 +1,8 @@
 export interface RadioStation {
-    name: string;
-    url: string;
-    country: string;
-    countrycode: string;
-    language: string;
-  }
+  data?: RadioStation;
+  name: string;
+  url: string;
+  country: string;
+  countrycode: string;
+  language: string;
+}
