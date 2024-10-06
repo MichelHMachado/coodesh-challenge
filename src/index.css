@@ -24,3 +24,11 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
+
+.loader {
+  @apply border-4 border-t-4 border-gray-200 border-t-blue-500 rounded-full w-5 h-5 animate-spin;
+  background-color: #F5F5F5;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px #E0E0E0,
+    inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
