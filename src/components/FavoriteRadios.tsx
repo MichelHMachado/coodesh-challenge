@@ -1,20 +1,73 @@
-import RadioCard from "./RadioCard";
-import RadioCardsList from "./RadioCardsList";
+import { useEffect, useState } from "react";
 
-const FavoriteRadios = () => {
+import RadioCardsList from "./RadioCardsList";
+import { RadioStation } from "../types/radioStation";
+import IconButton from "./IconButton";
+import { SearchIcon } from "../assets/icons";
+import { useRadio } from "../hooks/useRadio";
+
+interface Props {
+  favoriteStations: RadioStation[];
+}
+
+const FavoriteRadios = ({ favoriteStations }: Props) => {
+  const { selectedStation } = useRadio();
+  const [filteredStations, setFilteredStations] = useState<RadioStation[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    setFilteredStations(favoriteStations);
+  }, [favoriteStations]);
+
+  const filterStations = (input: string) => {
+    const filtered = favoriteStations.filter((station) => {
+      if (input === "") return true;
+      return (
+        station.name.toLowerCase().includes(input.toLowerCase()) ||
+        station.language?.toLowerCase().includes(input.toLowerCase()) ||
+        station.country.toLowerCase().includes(input.toLowerCase())
+      );
+    });
+    setFilteredStations(filtered);
+    setSearchTerm("");
+  };
+
+  const handleSearchTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+  };
+
   return (
     <>
-      <h2 className="text-gray-400"></h2>
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         <div className="uppercase">Favorite Radios</div>
-        <div>
-          <input type="text" />
+        <div className="flex gap-4 items-center">
+          <IconButton
+            Icon={SearchIcon}
+            onClick={() => {
+              filterStations(searchTerm);
+            }}
+            fill="blue"
+            containerSize="5"
+          />
+          <input
+            onChange={handleSearchTermChange}
+            value={searchTerm}
+            type="text"
+            placeholder="Search your stations..."
+            className="bg-transparent text-white rounded-[10px] p-2 focus:outline-none focus:ring focus:ring-gray-500"
+          />
         </div>
       </div>
-      <div className="bg-secondary-gray rounded-lg py-6 px-1 mt-1">
-        <RadioCard />
-        <div className="h-[3px] w-full bg-black"></div>
-        <RadioCardsList />
+      <div className="bg-secondary-gray rounded-[10px] py-2 px-1 mt-1">
+        {selectedStation.name !== "" ? (
+          <div>{selectedStation.name}</div>
+        ) : (
+          <div>Choose a Radio</div>
+        )}
+
+        <div className="shadow-md border-2 border-gray-700"></div>
+        <RadioCardsList stations={filteredStations} />
       </div>
     </>
   );
