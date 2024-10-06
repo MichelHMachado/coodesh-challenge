@@ -1,24 +1,29 @@
 import React from "react";
 
-// Define the props type for IconButton
 interface IconButtonProps {
-  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>; // Icon component type
-  size?: string; // Optional size prop
-  fill?: string; // Optional fill color
-  containerSize?: string; // Optional container size (e.g., tailwind width/height)
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  size?: string;
+  fill?: string;
+  containerSize?: string;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-// A reusable IconButton component that accepts size, fill, and icon as props
 const IconButton: React.FC<IconButtonProps> = ({
   Icon,
   size = "100%",
   fill = "black",
   containerSize = "7",
+  onClick,
 }) => {
+  const buttonSize = Number(containerSize) * 4;
   return (
-    <div className={` size-${containerSize} flex`}>
+    <button
+      onClick={onClick}
+      style={{ width: buttonSize, height: buttonSize }}
+      className="flex"
+    >
       <Icon style={{ width: size, height: size }} fill={fill} />
-    </div>
+    </button>
   );
 };
 
