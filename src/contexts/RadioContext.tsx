@@ -1,12 +1,19 @@
 import React, { createContext, useEffect, useState } from "react";
-import { RadioStation } from "../types/radioStation";
+import { RadioStation } from "../database/models/radioStation";
 import { getRadiosStation } from "../api/getAllRadioStations";
-import { addData, getData, openDatabase } from "../utils/indexedDB";
+import {
+  addData,
+  DB_CONFIG,
+  getData,
+  openDatabase,
+} from "../database/indexedDB";
 
 interface RadioContextType {
   stations: RadioStation[];
   favoriteRadios: RadioStation[];
   selectedStation: RadioStation;
+  isPlaying: boolean;
+  setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   setStations: (stations: RadioStation[]) => void;
   setFavoriteRadios: (stations: RadioStation[]) => void;
   setSelectedStation: (station: RadioStation) => void;
@@ -22,20 +29,23 @@ export const RadioProvider: React.FC<{ children: React.ReactNode }> = ({
   const [stations, setStations] = useState<RadioStation[]>([]);
   const [favoriteRadios, setFavoriteRadios] = useState<RadioStation[]>([]);
   const [selectedStation, setSelectedStation] = useState<RadioStation>({
+    stationuuid: "",
     name: "",
     language: "",
     country: "",
     countrycode: "",
     url: "",
   });
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     const fetchStations = async () => {
       try {
-        const db = await openDatabase("RadioDB", 4, [
-          "stations",
-          "favorite_stations",
-        ]);
+        const db = await openDatabase(
+          DB_CONFIG.dbName,
+          DB_CONFIG.version,
+          DB_CONFIG.stores
+        );
         const storedStations = await getData(db, "stations", "stationList");
 
         if (!storedStations) {
@@ -64,6 +74,8 @@ export const RadioProvider: React.FC<{ children: React.ReactNode }> = ({
         stations,
         favoriteRadios,
         selectedStation,
+        isPlaying,
+        setIsPlaying,
         setStations,
         setFavoriteRadios,
         setSelectedStation,

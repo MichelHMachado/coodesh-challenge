@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import FavoriteRadios from "./FavoriteRadios";
 
-import { getAllData, openDatabase } from "../utils/indexedDB";
+import { DB_CONFIG, getAllData, openDatabase } from "../database/indexedDB";
 import { useRadio } from "../hooks/useRadio";
 
 const Main = () => {
@@ -9,7 +9,11 @@ const Main = () => {
   useEffect(() => {
     const fetchFavoriteRadios = async () => {
       try {
-        const db = await openDatabase("RadioDB", 4, ["favorite_stations"]);
+        const db = await openDatabase(
+          DB_CONFIG.dbName,
+          DB_CONFIG.version,
+          DB_CONFIG.stores
+        );
         const data = await getAllData(db, "favorite_stations");
         setFavoriteRadios(data);
       } catch (error) {
