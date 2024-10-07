@@ -7,7 +7,7 @@ import {
 } from "../database/radioStationService";
 import useAudioPlayer from "../hooks/useAudioPlayer";
 import AudioControls from "./AudioControls";
-import { RadioStation } from "@/database/models/radioStation";
+import { RadioStation } from "../database/models/radioStation";
 import { useEffect, useState } from "react";
 
 interface SidebarRadioCardProps {
