@@ -12,24 +12,27 @@ const useAudioPlayer = (url: string, isActiveRadio: boolean) => {
     const handleAudioCanPlay = () => setIsLoading(false);
     const handleAudioPlaying = () => setIsLoading(false);
 
+    // Copy the audioRef.current to a local variable for cleanup
+    const currentAudio = audioRef.current;
+
     if (isPlaying && isActiveRadio) {
-      if (audioRef.current) {
-        audioRef.current.addEventListener("waiting", handleAudioWaiting);
-        audioRef.current.addEventListener("canplay", handleAudioCanPlay);
-        audioRef.current.addEventListener("playing", handleAudioPlaying);
+      if (currentAudio) {
+        currentAudio.addEventListener("waiting", handleAudioWaiting);
+        currentAudio.addEventListener("canplay", handleAudioCanPlay);
+        currentAudio.addEventListener("playing", handleAudioPlaying);
 
         if (url.endsWith(".m3u8") && Hls.isSupported()) {
           hlsRef.current = new Hls();
           hlsRef.current.loadSource(url);
-          hlsRef.current.attachMedia(audioRef.current);
+          hlsRef.current.attachMedia(currentAudio);
           hlsRef.current.on(Hls.Events.MANIFEST_PARSED, () => {
-            audioRef.current?.play().catch((error) => {
+            currentAudio?.play().catch((error) => {
               console.error("Error playing HLS audio:", error);
             });
           });
         } else {
-          audioRef.current.src = url;
-          audioRef.current.play().catch((error) => {
+          currentAudio.src = url;
+          currentAudio.play().catch((error) => {
             console.error("Error playing audio:", error);
             alert("This audio format is not supported on your device.");
             setIsLoading(false);
@@ -38,7 +41,7 @@ const useAudioPlayer = (url: string, isActiveRadio: boolean) => {
         }
       }
     } else {
-      audioRef.current?.pause();
+      currentAudio?.pause();
       setIsPlaying(false);
     }
 
@@ -47,10 +50,10 @@ const useAudioPlayer = (url: string, isActiveRadio: boolean) => {
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
-      if (audioRef.current) {
-        audioRef.current.removeEventListener("waiting", handleAudioWaiting);
-        audioRef.current.removeEventListener("canplay", handleAudioCanPlay);
-        audioRef.current.removeEventListener("playing", handleAudioPlaying);
+      if (currentAudio) {
+        currentAudio.removeEventListener("waiting", handleAudioWaiting);
+        currentAudio.removeEventListener("canplay", handleAudioCanPlay);
+        currentAudio.removeEventListener("playing", handleAudioPlaying);
       }
     };
   }, [isPlaying, isActiveRadio, url]);
