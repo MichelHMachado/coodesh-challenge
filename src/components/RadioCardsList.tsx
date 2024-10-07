@@ -1,4 +1,4 @@
-import { RadioStation } from "../types/radioStation";
+import { RadioStation } from "../database/models/radioStation";
 import RadioCard from "./RadioCard";
 
 interface Props {
@@ -12,7 +12,7 @@ const RadioCardsList = ({ stations }: Props) => {
         if (station.data) {
           return (
             <RadioCard
-              key={station.data?.name + index.toString()}
+              key={station.name + index.toString()}
               station={station.data}
             />
           );
