@@ -1,18 +1,25 @@
 import { EditIcon, RemoveIcon } from "../assets/icons";
-import { RadioStation } from "../types/radioStation";
+import { RadioStation } from "../database/models/radioStation";
 import IconButton from "./IconButton";
 import useAudioPlayer from "../hooks/useAudioPlayer";
 import AudioControls from "./AudioControls";
-import { deleteData, openDatabase, getAllData } from "../utils/indexedDB"; // Ensure to import getAllData
 import { useRadio } from "../hooks/useRadio";
+import { useState } from "react";
+import {
+  deleteRadioStation,
+  updateRadioStationName,
+} from "../database/radioStationService";
 
 interface Props {
   station: RadioStation;
 }
 
 const RadioCard = ({ station }: Props) => {
+  const [newName, setNewName] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
   const { selectedStation, setSelectedStation, setFavoriteRadios } = useRadio();
-  const { name, country, countrycode, url } = station;
+  const { stationuuid, name, country, countrycode, url } = station;
+
   const isActiveRadio = selectedStation.name === name;
 
   const { isPlaying, togglePlay, isLoading, audioRef } = useAudioPlayer(
@@ -21,18 +28,22 @@ const RadioCard = ({ station }: Props) => {
   );
 
   const handlePlayStopClick = () => {
-    console.log("Url: ", url);
     setSelectedStation(station);
     togglePlay();
   };
 
-  const deleteRadioFromFavoriteList = async () => {
-    const db = await openDatabase("RadioDB", 4, ["favorite_stations"]);
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
 
-    await deleteData(db, "favorite_stations", name);
+  const handleSubmitEdit = async (newName: string) => {
+    await updateRadioStationName(stationuuid, newName, setFavoriteRadios);
+    setIsEditing(false);
+  };
 
-    const updatedFavorites = await getAllData(db, "favorite_stations");
-    setFavoriteRadios(updatedFavorites);
+  const handleNewNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setNewName(value);
   };
 
   return (
@@ -49,7 +60,40 @@ const RadioCard = ({ station }: Props) => {
         />
       </div>
       <div className="grow">
-        <p className="text-3xl">{name}</p>
+        {isEditing ? (
+          <div>
+            <input
+              placeholder="Type the new name for the radio"
+              data-testid="edit-input"
+              type="text"
+              value={newName}
+              onChange={handleNewNameChange}
+              className=" border border-gray-300 bg-transparent text-white rounded-[10px] p-2 focus:outline-none focus:ring focus:ring-gray-500"
+            />
+            <div className="flex gap-2 mt-2">
+              <button
+                className="p-1 bg-red-300 rounded-md"
+                onClick={() => {
+                  setIsEditing(false);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="p-1 bg-blue-300 rounded-md"
+                data-testid="save-button"
+                onClick={() => {
+                  handleSubmitEdit(newName);
+                }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-3xl">{name}</p>
+        )}
+
         {country && countrycode ? (
           <p className="text-sm">
             {country}, {countrycode}
@@ -59,10 +103,17 @@ const RadioCard = ({ station }: Props) => {
         )}
       </div>
       <div className="flex gap-4">
-        <IconButton onClick={() => {}} Icon={EditIcon} />
-        <IconButton onClick={deleteRadioFromFavoriteList} Icon={RemoveIcon} />
+        <IconButton
+          dataTestid="edit-button"
+          onClick={handleEditClick}
+          Icon={EditIcon}
+        />
+        <IconButton
+          onClick={() => deleteRadioStation(stationuuid, setFavoriteRadios)} // Call the new function
+          Icon={RemoveIcon}
+        />
       </div>
-      {url && <audio ref={audioRef} />}
+      {url && <audio data-testid="audio-element" ref={audioRef} />}
     </div>
   );
 };
