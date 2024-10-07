@@ -55,49 +55,40 @@ export const RadioProvider: React.FC<{ children: React.ReactNode }> = ({
 
         const storedData = await getData(db, "stations", "stationList");
 
-        const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
-        const currentTime = Date.now();
+        const hasDataProperty = storedData && "data" in storedData;
+        const hasTimestampProperty = storedData && "timestamp" in storedData;
 
-        let timeSpentFromLastFetch: number | null = null;
-
-        if (storedData && "timestamp" in storedData) {
-          timeSpentFromLastFetch = currentTime - Number(storedData.timestamp);
+        if (hasDataProperty) {
+          setStations(storedData.data);
         }
+
+        const currentTime = Date.now();
+        const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
 
         if (
           !storedData ||
-          (timeSpentFromLastFetch ?? Infinity) > oneDayInMilliseconds
+          (hasTimestampProperty &&
+            currentTime - Number(storedData.timestamp) > oneDayInMilliseconds)
         ) {
           const fetchedStations = await getRadiosStation();
 
-          if (
-            !storedData ||
-            (storedData &&
-              "data" in storedData &&
-              JSON.stringify(fetchedStations) !==
-                JSON.stringify(storedData.data))
-          ) {
-            if (fetchedStations) {
-              const dataWithTimestamp: RadioStationData = {
-                id: "stationList",
-                data: fetchedStations,
-                timestamp: currentTime,
-              };
+          if (fetchedStations) {
+            const dataWithTimestamp: RadioStationData = {
+              id: "stationList",
+              data: fetchedStations,
+              timestamp: currentTime,
+            };
 
+            if (
+              !hasDataProperty ||
+              JSON.stringify(fetchedStations) !==
+                JSON.stringify(storedData?.data)
+            ) {
               await addData(db, "stations", dataWithTimestamp);
-              setStations(fetchedStations);
             }
-          } else if (storedData && "data" in storedData) {
-            setStations(storedData.data);
+
+            setStations(fetchedStations);
           }
-        } else if (storedData && "data" in storedData) {
-          setStations(storedData.data);
-        } else {
-          console.warn(
-            "Stored data is not valid RadioStationData, using fetched data."
-          );
-          const fetchedStations = await getRadiosStation();
-          setStations(fetchedStations!);
         }
       } catch (error) {
         console.log("Error fetching stations: ", error);
