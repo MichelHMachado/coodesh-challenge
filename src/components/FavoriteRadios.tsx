@@ -39,7 +39,7 @@ const FavoriteRadios = ({ favoriteStations }: Props) => {
 
   return (
     <>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between flex-col items-start md:flex-row md:items-center">
         <div className="uppercase">Favorite Radios</div>
         <div className="flex gap-4 items-center">
           <IconButton

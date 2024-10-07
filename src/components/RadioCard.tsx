@@ -50,7 +50,7 @@ const RadioCard = ({ station }: Props) => {
     <div
       className={`${
         !isActiveRadio ? "bg-light-gray" : "bg-gray-500"
-      } rounded-sm py-2 pl-8 pr-4 flex gap-4 justify-between items-center transition-all duration-300`}
+      } flex justify-between flex-col items-start md:flex-row md:items-center rounded-sm py-2 pl-8 pr-4  gap-4  transition-all duration-300`}
     >
       <div className="w-12 h-12 rounded-full bg-primary-gray flex justify-center items-center shrink-0">
         <AudioControls
