@@ -18,6 +18,7 @@ A dynamic audio player for streaming music and radio, designed for effortless co
 - **ESLint**: A static code analysis tool for identifying and fixing problems in JavaScript and TypeScript code.
 - **@testing-library**: A family of libraries for testing React components in a user-centric way.
 - **HLS.js**: A JavaScript library for playing HLS (HTTP Live Streaming) videos in browsers.
+- **Docker**: A platform for developing, shipping, and running applications in containers, ensuring a consistent environment across different setups.
 
 ## Installation
 
@@ -47,11 +48,25 @@ or with Yarn:
 
 yarn dev
 
-Visit `http://localhost:5173/` in your browser to view the application.
+Visit `http://localhost:3000/` in your browser to view the application.
 
 To start the test run:
 
 yarn test
+
+### Docker Setup
+
+To facilitate deployment and ensure a consistent environment for development, this project includes a Docker configuration. You can build and run the application using Docker with the following steps:
+
+1. **Ensure Docker is installed** on your machine. You can download it from [Docker's official website](https://www.docker.com/get-started).
+
+2. **Build the Docker image:**
+
+   Navigate to the project directory and run:
+
+   ```bash
+   docker build -t radio-browser-challenge .
+   ```
 
 ## Deploy link
 
