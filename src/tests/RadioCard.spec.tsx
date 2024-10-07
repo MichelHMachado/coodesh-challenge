@@ -34,6 +34,7 @@ beforeAll(() => {
 // Mock context values
 const mockContextValue = {
   stations: [], // You can leave it empty or with mock stations if needed
+  isFetching: false,
   favoriteRadios: [],
   selectedStation: mockStation, // Set this if you want a specific station selected
   isPlaying: false,
