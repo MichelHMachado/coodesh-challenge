@@ -1,4 +1,4 @@
-import { RadioStation } from "../types/radioStation";
+import { RadioStation } from "../database/models/radioStation";
 
 export const getRadiosStation = async (): Promise<RadioStation[] | null> => {
   try {
@@ -18,12 +18,15 @@ export const getRadiosStation = async (): Promise<RadioStation[] | null> => {
     const data: RadioStation[] = await response.json();
 
     const filteredData = data.map((station: RadioStation) => ({
+      stationuuid: station.stationuuid,
       name: station.name,
       url: station.url,
       country: station.country,
       countrycode: station.countrycode,
       language: station.language,
     }));
+
+    console.log("Stations fetched successfully");
 
     return filteredData;
   } catch (error) {
