@@ -56,6 +56,14 @@ const useAudioPlayer = (url: string, isActiveRadio: boolean) => {
   }, [isPlaying, isActiveRadio, url]);
 
   const togglePlay = () => {
+    const allAudioElements = document.querySelectorAll("audio");
+    allAudioElements.forEach((audioElement) => {
+      if (audioElement !== audioRef.current) {
+        audioElement.pause();
+        audioElement.currentTime = 0;
+      }
+    });
+
     setIsPlaying((prev) => !prev);
   };
 
