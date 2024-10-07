@@ -13,7 +13,11 @@ const AudioControls = ({ isLoading, onClick, isPlaying }: Props) => {
       {isLoading ? (
         <div className="loader" />
       ) : (
-        <IconButton onClick={onClick} Icon={isPlaying ? StopIcon : PlayIcon} />
+        <IconButton
+          dataTestid="play-stop-button"
+          onClick={onClick}
+          Icon={isPlaying ? StopIcon : PlayIcon}
+        />
       )}
     </>
   );

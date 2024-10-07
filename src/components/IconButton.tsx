@@ -6,6 +6,7 @@ interface IconButtonProps {
   fill?: string;
   containerSize?: string;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
+  dataTestid?: string;
 }
 
 const IconButton: React.FC<IconButtonProps> = ({
@@ -14,10 +15,12 @@ const IconButton: React.FC<IconButtonProps> = ({
   fill = "black",
   containerSize = "7",
   onClick,
+  dataTestid,
 }) => {
   const buttonSize = Number(containerSize) * 4;
   return (
     <button
+      data-testid={dataTestid}
       onClick={onClick}
       style={{ width: buttonSize, height: buttonSize }}
       className="flex"
