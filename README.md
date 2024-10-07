@@ -55,7 +55,7 @@ yarn test
 
 ## Deploy link
 
-https://radio-browsercoodesh-challenge-gztp3k9j7.vercel.app/
+https://radio-browsercoodesh-challenge.vercel.app/
 
 ## Decision-Making in Development
 
