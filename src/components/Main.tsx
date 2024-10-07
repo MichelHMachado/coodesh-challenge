@@ -5,7 +5,8 @@ import { DB_CONFIG, getAllData, openDatabase } from "../database/indexedDB";
 import { useRadio } from "../hooks/useRadio";
 
 const Main = () => {
-  const { favoriteRadios, setFavoriteRadios } = useRadio();
+  const { isFetching, favoriteRadios, setFavoriteRadios } = useRadio();
+
   useEffect(() => {
     const fetchFavoriteRadios = async () => {
       try {
@@ -24,10 +25,24 @@ const Main = () => {
   }, [setFavoriteRadios]);
 
   return (
-    <div className="py-10 px-6 w-full">
+    <div className="py-10 px-6 w-full relative">
       <h1 className="text-3xl font-semibold text-center mb-4">Radio Browser</h1>
 
       <FavoriteRadios favoriteStations={favoriteRadios} />
+      {isFetching && (
+        <div className="flex flex-col gap-10 justify-center items-center absolute top-[50%] left-[50%] w-80 bg-blue-500/30 backdrop-blur-md border border-white/30 rounded-lg shadow-lg p-4 translate-x-[-50%] translate-y-[-50%]">
+          <div className="loader"></div>
+          <div>
+            <p className="text-lg text-center">
+              Processing stations from all around the word!
+            </p>
+            <p className="text-md text-center mt-3 text-gray-300 font-semibold">
+              It will take only a few seconds and will happen just on your first
+              access
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
