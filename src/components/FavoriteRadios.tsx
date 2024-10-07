@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import RadioCardsList from "./RadioCardsList";
-import { RadioStation } from "../types/radioStation";
+import { RadioStation } from "../database/models/radioStation";
 import IconButton from "./IconButton";
 import { SearchIcon } from "../assets/icons";
 import { useRadio } from "../hooks/useRadio";
@@ -23,9 +23,9 @@ const FavoriteRadios = ({ favoriteStations }: Props) => {
     const filtered = favoriteStations.filter((station) => {
       if (input === "") return true;
       return (
-        station.name.toLowerCase().includes(input.toLowerCase()) ||
-        station.language?.toLowerCase().includes(input.toLowerCase()) ||
-        station.country.toLowerCase().includes(input.toLowerCase())
+        station.data?.name.toLowerCase().includes(input.toLowerCase()) ||
+        station.data?.language?.toLowerCase().includes(input.toLowerCase()) ||
+        station.data?.country.toLowerCase().includes(input.toLowerCase())
       );
     });
     setFilteredStations(filtered);
@@ -51,6 +51,11 @@ const FavoriteRadios = ({ favoriteStations }: Props) => {
             containerSize="5"
           />
           <input
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                filterStations(searchTerm);
+              }
+            }}
             onChange={handleSearchTermChange}
             value={searchTerm}
             type="text"
