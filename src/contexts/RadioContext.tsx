@@ -1,5 +1,8 @@
 import React, { createContext, useEffect, useState } from "react";
-import { RadioStation } from "../database/models/radioStation";
+import {
+  RadioStation,
+  RadioStationData,
+} from "../database/models/radioStation";
 import { getRadiosStation } from "../api/getAllRadioStations";
 import {
   addData,
@@ -10,6 +13,7 @@ import {
 
 interface RadioContextType {
   stations: RadioStation[];
+  isFetching: boolean;
   favoriteRadios: RadioStation[];
   selectedStation: RadioStation;
   isPlaying: boolean;
@@ -37,31 +41,68 @@ export const RadioProvider: React.FC<{ children: React.ReactNode }> = ({
     url: "",
   });
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     const fetchStations = async () => {
       try {
+        setIsFetching(true);
         const db = await openDatabase(
           DB_CONFIG.dbName,
           DB_CONFIG.version,
           DB_CONFIG.stores
         );
-        const storedStations = await getData(db, "stations", "stationList");
 
-        if (!storedStations) {
-          const stationsData = await getRadiosStation();
-          if (stationsData) {
-            await addData(db, "stations", {
-              id: "stationList",
-              data: stationsData,
-            });
-            setStations(stationsData);
+        const storedData = await getData(db, "stations", "stationList");
+
+        const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+        const currentTime = Date.now();
+
+        let timeSpentFromLastFetch: number | null = null;
+
+        if (storedData && "timestamp" in storedData) {
+          timeSpentFromLastFetch = currentTime - Number(storedData.timestamp);
+        }
+
+        if (
+          !storedData ||
+          (timeSpentFromLastFetch ?? Infinity) > oneDayInMilliseconds
+        ) {
+          const fetchedStations = await getRadiosStation();
+
+          if (
+            !storedData ||
+            (storedData &&
+              "data" in storedData &&
+              JSON.stringify(fetchedStations) !==
+                JSON.stringify(storedData.data))
+          ) {
+            if (fetchedStations) {
+              const dataWithTimestamp: RadioStationData = {
+                id: "stationList",
+                data: fetchedStations,
+                timestamp: currentTime,
+              };
+
+              await addData(db, "stations", dataWithTimestamp);
+              setStations(fetchedStations);
+            }
+          } else if (storedData && "data" in storedData) {
+            setStations(storedData.data);
           }
+        } else if (storedData && "data" in storedData) {
+          setStations(storedData.data);
         } else {
-          setStations(storedStations);
+          console.warn(
+            "Stored data is not valid RadioStationData, using fetched data."
+          );
+          const fetchedStations = await getRadiosStation();
+          setStations(fetchedStations!);
         }
       } catch (error) {
         console.log("Error fetching stations: ", error);
+      } finally {
+        setIsFetching(false);
       }
     };
 
@@ -72,6 +113,7 @@ export const RadioProvider: React.FC<{ children: React.ReactNode }> = ({
     <RadioContext.Provider
       value={{
         stations,
+        isFetching,
         favoriteRadios,
         selectedStation,
         isPlaying,

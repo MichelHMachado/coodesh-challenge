@@ -1,5 +1,4 @@
 export interface RadioStation {
-  data?: RadioStation;
   stationuuid: string;
   name: string;
   url: string;
@@ -10,5 +9,6 @@ export interface RadioStation {
 
 export interface RadioStationData {
   id: string;
-  data: RadioStation[] | RadioStation;
+  data: RadioStation[];
+  timestamp?: number;
 }
