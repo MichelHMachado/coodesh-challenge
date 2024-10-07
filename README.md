@@ -47,7 +47,15 @@ or with Yarn:
 
 yarn dev
 
-Visit `http://localhost:3000` in your browser to view the application.
+Visit `http://localhost:5173/` in your browser to view the application.
+
+To start the test run:
+
+yarn test
+
+## Deploy link
+
+https://radio-browsercoodesh-challenge-9z514ybzk.vercel.app/
 
 ## Decision-Making in Development
 
