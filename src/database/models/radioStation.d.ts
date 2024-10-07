@@ -1,4 +1,5 @@
 export interface RadioStation {
+  data?: RadioStation;
   stationuuid: string;
   name: string;
   url: string;

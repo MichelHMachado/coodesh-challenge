@@ -33,7 +33,10 @@ export const addRadioToFavorite = async (
     DB_CONFIG.version,
     DB_CONFIG.stores
   );
-  await addData(db, "favorite_stations", { id: stationuuid, data: station });
+  await addData(db, "favorite_stations", {
+    id: stationuuid,
+    data: [station],
+  });
 };
 
 export const getFavoriteStations = async (): Promise<RadioStation[]> => {
