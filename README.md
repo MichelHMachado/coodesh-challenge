@@ -76,7 +76,7 @@ https://radio-browsercoodesh-challenge.vercel.app/
 
 I chose to fetch all station data to enhance the user experience. Given the large amount of data, I managed it using a simple database with IndexedDB. This approach provides real database functionality without the need for additional third-party databases, allowing for faster development.
 
-Users will only need to wait for the data to load the first time they access the app; subsequent requests will be fetched from their local IndexedDB.
+Users will only need to wait for the data to load the first time they access the app; subsequent requests will be fetched from their local IndexedDB. I also added a check to see if more than one day has passed since the last fetch. If it has, the system will seamlessly verify whether the new request data is different from what’s currently in the database. If there’s a difference, it will update the data. This way, I enhance the user experience and ensure that their stations are kept up to date.
 
 While I could have used Redux for state management, I opted for React’s Context API instead, as it wasn't specified in the project requirements. This choice helps improve prop drilling.
 
